@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My 3D Model Library</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Model Viewer CDN -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/1.12.0/model-viewer.min.js"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+        }
+        /* Custom styling for model-viewer for better appearance */
+        model-viewer {
+            width: 100%;
+            height: 300px; /* Fixed height for consistent card size */
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff; /* White background for the viewer area */
+            --poster-color: #f8f8f8; /* Color behind the poster image */
+            --progress-bar-color: #4f46e5; /* Primary indigo color for progress bar */
+            --progress-bar-height: 4px;
+        }
+        .model-card {
+            display: flex;
+            flex-direction: column;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #ffffff;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            border: 1px solid #e5e7eb; /* Subtle border */
+        }
+        .model-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .model-info {
+            padding: 1.5rem; /* Equivalent to p-6 */
+        }
+        .model-title {
+            font-size: 1.5rem; /* Equivalent to text-2xl */
+            font-weight: 600; /* Equivalent to font-semibold */
+            margin-bottom: 0.5rem;
+            color: #1f2937; /* Dark gray text */
+        }
+        .model-description {
+            font-size: 0.95rem; /* Slightly smaller text */
+            color: #4b5563; /* Medium gray text */
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-4 sm:p-6 lg:p-8">
+    <header class="w-full max-w-7xl text-center mb-10 mt-4">
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-indigo-700 leading-tight mb-4">
+            My 3D Model Library
+        </h1>
+        <p class="text-lg text-gray-600">
+            Explore a collection of interactive 3D models right in your browser.
+        </p>
+    </header>
+
+    <main id="models-container" class="w-full max-w-7xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 pb-10">
+        <!-- 3D Model Cards will be dynamically inserted here by JavaScript -->
+    </main>
+
+    <script>
+        // Define your 3D models here
+        // IMPORTANT: Replace 'src' with the actual paths to your .glb models on GitHub Pages.
+        // For example, if 'Kitty.glb' is in a folder named 'models' in your repo, use './models/Kitty.glb'
+        const models = [
+            {
+                id: 'astronaut',
+                title: 'Astronaut',
+                description: 'A detailed 3D model of an astronaut, ready for space exploration.',
+                src: 'https://modelviewer.dev/shared-assets/models/Astronaut.glb',
+                poster: 'https://modelviewer.dev/shared-assets/models/Astronaut.webp',
+                animation: 'Idle', // Example: if your model has animations, specify one
+                autoRotate: true,
+                cameraControls: true
+            },
+            {
+                id: 'robot-expressive',
+                title: 'Robot Expressive',
+                description: 'A charming robot model with various built-in expressions and animations.',
+                src: 'https://modelviewer.dev/shared-assets/models/RobotExpressive.glb',
+                poster: 'https://modelviewer.dev/shared-assets/models/RobotExpressive.webp',
+                animation: 'Wave',
+                autoRotate: true,
+                cameraControls: true
+            },
+            {
+                id: 'damaged-helmet',
+                title: 'Damaged Helmet',
+                description: 'A highly detailed PBR model of a sci-fi helmet, showing realistic wear and tear.',
+                src: 'https://modelviewer.dev/shared-assets/models/DamagedHelmet.glb',
+                poster: 'https://modelviewer.dev/shared-assets/models/DamagedHelmet.webp',
+                autoRotate: false,
+                cameraControls: true
+            },
+            {
+                id: 'kitty',
+                title: 'Cute Kitty',
+                description: 'A cute 3D model of a kitty, purrfect for your collection!',
+                // You will replace this with your actual GitHub Pages path, e.g.:
+                // src: './models/Kitty.glb'
+                src: 'https://modelviewer.dev/shared-assets/models/Horse.glb', // Placeholder: Use a public model for now
+                autoRotate: true,
+                cameraControls: true
+            }
+            // Add more models here!
+            /*
+            {
+                id: 'my-custom-model',
+                title: 'My Custom Sculpture',
+                description: 'This is a model I created and uploaded to my GitHub repository.',
+                // Assuming you uploaded 'my_sculpture.glb' to a 'models' folder in your repo:
+                src: './models/my_sculpture.glb',
+                poster: './models/my_sculpture_poster.webp', // Optional: path to a poster image
+                autoRotate: true,
+                cameraControls: true
+            }
+            */
+        ];
+
+        const modelsContainer = document.getElementById('models-container');
+
+        models.forEach(model => {
+            const modelCard = document.createElement('div');
+            modelCard.className = 'model-card';
+
+            const modelViewer = document.createElement('model-viewer');
+            modelViewer.setAttribute('src', model.src);
+            modelViewer.setAttribute('alt', model.alt || model.title);
+            modelViewer.setAttribute('ar', '');
+            modelViewer.setAttribute('ar-modes', 'webxr quick-look scene-viewer');
+            modelViewer.setAttribute('shadow-intensity', '1');
+            modelViewer.setAttribute('exposure', '1');
+            modelViewer.setAttribute('environment-image', 'neutral');
+            modelViewer.setAttribute('bounds', 'tight');
+            modelViewer.setAttribute('crossorigin', 'anonymous'); // Essential for cross-origin fetches
+
+            if (model.poster) {
+                modelViewer.setAttribute('poster', model.poster);
+            }
+            if (model.autoRotate) {
+                modelViewer.setAttribute('auto-rotate', '');
+            }
+            if (model.cameraControls) {
+                modelViewer.setAttribute('camera-controls', '');
+            }
+            if (model.animation) {
+                modelViewer.setAttribute('animation-name', model.animation);
+                modelViewer.setAttribute('autoplay', ''); // Autoplay if animation is set
+            }
+
+            // Create model info div
+            const modelInfo = document.createElement('div');
+            modelInfo.className = 'model-info';
+
+            const modelTitle = document.createElement('h2');
+            modelTitle.className = 'model-title';
+            modelTitle.textContent = model.title;
+
+            const modelDescription = document.createElement('p');
+            modelDescription.className = 'model-description';
+            modelDescription.textContent = model.description;
+
+            // Append elements
+            modelInfo.appendChild(modelTitle);
+            modelInfo.appendChild(modelDescription);
+            modelCard.appendChild(modelViewer);
+            modelCard.appendChild(modelInfo);
+            modelsContainer.appendChild(modelCard);
+        });
+    </script>
+</body>
+</html>
